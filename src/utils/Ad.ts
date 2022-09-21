@@ -5,6 +5,7 @@ import Organization from "../models/organization";
 import Slot from "../models/slot";
 import * as geoip from "fast-geoip";
 import AdLog from "../models/adLog";
+import DefaultAd from "../models/defaultAd";
 
 class AdUtils {
   public static async slotFetcher({ categoryId }) {
@@ -112,6 +113,8 @@ class AdUtils {
     let slotData: any = await this.slotFetcher({ categoryId });
 
     let finalResult: MainFetcherDto = {};
+    let defaultAd = await DefaultAd.findOne({ categoryId });
+
     if (slotData) {
       let activityStatus = await this.checkActivityStatus({ slotData });
 
@@ -136,15 +139,14 @@ class AdUtils {
         finalResult.redirectUrl = slotData.adId.redirectUrl;
         finalResult.status = true;
         finalResult.message = "Views Available";
-
-        //adding functions for log files for organization
       } else {
         //views are vanished so send default ad based on category
+
         finalResult.default = true;
         finalResult.status = true;
         finalResult.message = "Views Are Vanished";
-        finalResult.redirectUrl = "";
-        finalResult.imageUrl = "";
+        finalResult.redirectUrl = defaultAd.categoryId;
+        finalResult.imageUrl = defaultAd.imageLink;
       }
     } else {
       //to add dynamic default url based on category
@@ -153,8 +155,8 @@ class AdUtils {
       finalResult.default = true;
       finalResult.status = true;
       finalResult.message = "Slot Not Available";
-      finalResult.redirectUrl = "";
-      finalResult.imageUrl = "";
+      finalResult.redirectUrl = defaultAd.categoryId;
+      finalResult.imageUrl = defaultAd.imageLink;
     }
 
     return finalResult;
