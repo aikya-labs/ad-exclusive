@@ -8,4 +8,5 @@ export interface MainFetcherDto {
   view?: boolean;
   imageUrl?: string;
   redirectUrl?: string;
+  adId?: any;
 }

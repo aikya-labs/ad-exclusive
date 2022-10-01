@@ -123,10 +123,17 @@ class AdUtils {
       finalResult.view = activityStatus.view;
 
       if (finalResult.view) {
-        await this.updateActivityStatus({
+        let check = await AdLog.findOne({
+          ipAddress,
+          type: "VIEW",
           adId: slotData.adId._id,
-          organizationId: slotData.organizationId._id,
         });
+        if (!check) {
+          await this.updateActivityStatus({
+            adId: slotData.adId._id,
+            organizationId: slotData.organizationId._id,
+          });
+        }
 
         this.adLogCreator({
           adId: slotData.adId._id,
@@ -137,6 +144,7 @@ class AdUtils {
 
         finalResult.imageUrl = slotData.adId.imageLink;
         finalResult.redirectUrl = slotData.adId.redirectUrl;
+        finalResult.adId = slotData.adId._id;
         finalResult.status = true;
         finalResult.message = "Views Available";
       } else {
@@ -150,7 +158,7 @@ class AdUtils {
       }
     } else {
       //to add dynamic default url based on category
-      finalResult.click = false;
+      finalResult.click = defaultAd.click;
       finalResult.view = false;
       finalResult.default = true;
       finalResult.status = true;
@@ -162,10 +170,8 @@ class AdUtils {
     return finalResult;
   }
 
-  public static async adClickHandler({ redirectUrl, ipAddress, requestUrl }) {
-    let adData: any = await Ad.findOne({ redirectUrl }).populate(
-      "organizationId"
-    );
+  public static async adClickHandler({ adId, ipAddress, requestUrl }) {
+    let adData: any = await Ad.findById(adId).populate("organizationId");
     console.log("ad data is ", adData);
     if (adData) {
       if (adData.currClickCounts > adData.organizationId.balanceClicks) {
@@ -184,17 +190,25 @@ class AdUtils {
         }
       );
 
-      let updatedOrg = await Organization.findByIdAndUpdate(
-        adData.organizationId._id,
-        {
-          $inc: {
-            balanceClicks: -1,
+      let check = await AdLog.findOne({
+        ipAddress,
+        type: "CLICK",
+        adId: adData._id,
+      });
+
+      if (!check) {
+        let updatedOrg = await Organization.findByIdAndUpdate(
+          adData.organizationId._id,
+          {
+            $inc: {
+              balanceClicks: -1,
+            },
           },
-        },
-        {
-          new: true,
-        }
-      );
+          {
+            new: true,
+          }
+        );
+      }
 
       this.adLogCreator({
         adId: adData._id,
@@ -203,7 +217,6 @@ class AdUtils {
         type: "CLICK",
       });
 
-      console.log("udpated ad and organization are ", updatedAd, updatedOrg);
       return { status: true };
     }
   }

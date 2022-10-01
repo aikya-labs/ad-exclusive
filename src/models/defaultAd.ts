@@ -14,6 +14,10 @@ const defaultAdSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    click: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,

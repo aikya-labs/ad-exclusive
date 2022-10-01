@@ -27,10 +27,10 @@ app.get("/fetch-ad", async (req, res) => {
 
 app.get("/click-ad", async (req, res) => {
   try {
-    let { redirectUrl, requestUrl } = req.query;
+    let { adId, requestUrl } = req.query;
 
     let data = await AdUtils.adClickHandler({
-      redirectUrl,
+      adId,
       ipAddress: req.ip,
       requestUrl,
     });

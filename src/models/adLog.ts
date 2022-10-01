@@ -28,5 +28,7 @@ const adLogSchema = new mongoose.Schema(
   }
 );
 
+adLogSchema.index({ adId: 1, type: 1, ipAddress: 1 }, { unique: true });
+
 const AdLog = mongoose.model("adlog", adLogSchema);
 export default AdLog;
