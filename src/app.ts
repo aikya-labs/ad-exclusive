@@ -4,7 +4,9 @@ require("dotenv").config();
 require("./config/mongoose");
 import cors from 'cors';
 const app = express();
-app.use(cors);
+app.use(cors({
+  origin: ['https://exclusive.reviews/', 'https://exclusive.reviews', 'http://localhost:3000', 'https://exclusive.vercel.app/'],
+}));
 const port = process.env.port || 3002;
 
 app.get("/fetch-ad", async (req, res) => {
