@@ -153,7 +153,7 @@ class AdUtils {
         finalResult.default = true;
         finalResult.status = true;
         finalResult.message = "Views Are Vanished";
-        finalResult.redirectUrl = defaultAd.categoryId;
+        finalResult.redirectUrl = defaultAd.redirectUrl;
         finalResult.imageUrl = defaultAd.imageLink;
       }
     } else {
@@ -163,7 +163,7 @@ class AdUtils {
       finalResult.default = true;
       finalResult.status = true;
       finalResult.message = "Slot Not Available";
-      finalResult.redirectUrl = defaultAd.categoryId;
+      finalResult.redirectUrl = defaultAd.redirectUrl;
       finalResult.imageUrl = defaultAd.imageLink;
     }
 
