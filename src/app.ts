@@ -2,7 +2,9 @@ import express from "express";
 import AdUtils from "./utils/Ad";
 require("dotenv").config();
 require("./config/mongoose");
+import cors from 'cors';
 const app = express();
+app.use(cors);
 const port = process.env.port || 3002;
 
 app.get("/fetch-ad", async (req, res) => {
